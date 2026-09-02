@@ -3,13 +3,11 @@ const { default: mongoose } = require("mongoose");
 const dbconnection = async () => {
   // mongoose max operation will return promises
   try {
-    await mongoose.connect(
-      "mongodb+srv://benitomussolini857_db_user:benito@benito.fghrxis.mongodb.net/",
-    );
+    await mongoose.connect(process.env.mongodb_uri);
   } catch (error) {
     console.log(error);
   }
-  console.log("mongoose db connected");
+  console.log("mongoose connected");
 };
 
-module.exports=dbconnection
+module.exports = dbconnection;

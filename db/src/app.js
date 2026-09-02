@@ -7,7 +7,7 @@ const app = express();
 dbconnection();
 
 app.get("/", (req, res) => {
-  res.send("yoooo");
+  res.send("This is the test db connection");
 });
 
 module.exports = app;
