@@ -3,9 +3,16 @@ const NotesModel = require("./models/notes.model");
 const dbconnection = require("./config/db");
 const createnotescontroller = require("./controllers/createnotescontroller");
 const notesroutes = require("./routes/notes.route");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
+//  app.use(cors("*")) -> this is used to allow access to all the origin, but if u want to allow specific origins then pass an obj specifying the address
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  }),
+);
 
 dbconnection();
 
@@ -26,7 +33,7 @@ app.get("/", (req, res) => {
 // 2./notes/allnotes ->get all notes
 
 // conclucion is that
-// Mounting related routes under a common base path keeps the API organized. 
+// Mounting related routes under a common base path keeps the API organized.
 // For example, /notes becomes the base resource path, while individual router paths define operations such as /create or /:id.
 
 app.use("/notes", notesroutes);
