@@ -1,4 +1,4 @@
-JWT Authentication: Access Tokens & Refresh Tokens
+## JWT Authentication: Access Tokens & Refresh Tokens
 
 1. Overview
 
@@ -15,7 +15,7 @@ The refresh token is used to get a new access token.
 
 The project also stores the refresh token in an HTTP-only cookie and in the user's MongoDB document.
 
-2. Project Flow
+## 2. Project Flow
 
 The authentication flow can be visualized like this:
 
@@ -60,7 +60,7 @@ The authentication flow can be visualized like this:
                               v
                      Return new Access Token
 
-3. Files and Their Responsibilities
+## 3. Files and Their Responsibilities
 
 The authentication system is split into several files.
 
@@ -90,7 +90,7 @@ Connects to MongoDB and starts the HTTP server
 
 This separation is useful because each file has a focused responsibility.
 
-4. auth.js — JWT Generation and Verification
+## 4. auth.js — JWT Generation and Verification
 
 The authentication utility imports jsonwebtoken and configuration values.
 
@@ -151,7 +151,7 @@ The access token expires after 15 minutes.
 
 This makes it a short-lived credential.
 
-5. Refresh Token Generation
+## 5. Refresh Token Generation
 
 The refresh token is generated separately:
 
@@ -181,7 +181,7 @@ secret
 
 storage/transport in this application
 
-6. Returning Both Tokens
+## 6. Returning Both Tokens
 
 The function returns:
 
@@ -206,7 +206,7 @@ The caller can then destructure them:
 
 const { accesstoken, refreshtoken } = generatetokens(...);
 
-7. Verifying the Access Token
+## 7. Verifying the Access Token
 
 The project defines:
 
@@ -238,7 +238,7 @@ to identify the user.
 
 If verification fails, jwt.verify() throws an error. The route calling this function catches that error and sends an unauthorized response.
 
-8. Verifying the Refresh Token
+## 8. Verifying the Refresh Token
 
 The refresh token has its own verification function:
 
@@ -253,7 +253,7 @@ config.REFRESH_TOKEN
 
 The refresh token must be verified using the refresh-token secret.
 
-9. Access Token vs Refresh Token
+## 9. Access Token vs Refresh Token
 
 Feature
 
@@ -323,7 +323,7 @@ Do not think of the refresh token as a "stronger access token."
 
 It has a different job.
 
-10. Registration Route
+## 10. Registration Route
 
 The registration route is:
 
@@ -343,7 +343,7 @@ const { email, name, password } = req.body;
 
 The server extracts the registration data from the request body.
 
-11. Checking Whether the User Already Exists
+## 11. Checking Whether the User Already Exists
 
 const isuserexisting = await usermodel.findOne({ email });
 
@@ -361,7 +361,7 @@ res.status(400).json({
 
 This prevents duplicate registration with the same email.
 
-12. Password Hashing
+## 12. Password Hashing
 
 The password is not stored directly.
 
@@ -375,7 +375,7 @@ The 12 is the bcrypt cost factor used here.
 
 The database therefore stores a password hash rather than the original password.
 
-13. Creating the User
+## 13. Creating the User
 
 const user = await usermodel.create({
   name,
@@ -387,7 +387,7 @@ MongoDB creates the user document.
 
 The generated MongoDB _id becomes the user's identifier.
 
-14. Generating Tokens After Registration
+## 14. Generating Tokens After Registration
 
 const { accesstoken, refreshtoken } =
   generatetokens({ userid: user._id });
@@ -404,7 +404,7 @@ MongoDB user
             |
             +--> Refresh JWT payload: { id: _id }
 
-15. Storing the Refresh Token
+## 15. Storing the Refresh Token
 
 The project stores the refresh token on the user:
 
@@ -419,7 +419,7 @@ refreshtoken: {
 
 This gives the server a stored reference against which the incoming refresh token can be compared.
 
-16. HTTP-Only Cookie
+## 16. HTTP-Only Cookie
 
 The refresh token is also sent as a cookie:
 
@@ -437,7 +437,7 @@ This reduces exposure to token theft through client-side JavaScript, particularl
 
 The browser still sends the cookie with applicable requests.
 
-17. Why the Access Token Is Returned in JSON
+## 17. Why the Access Token Is Returned in JSON
 
 The registration response contains:
 
@@ -456,7 +456,7 @@ The project does not place the access token in the HTTP-only cookie.
 
 The refresh token is the one placed in the cookie.
 
-18. /me — Using the Access Token
+## 18. /me — Using the Access Token
 
 The route is:
 
@@ -468,7 +468,7 @@ GET /app/auth/me
 
 This route demonstrates the normal use of an access token.
 
-19. Authorization Header
+## 19. Authorization Header
 
 The code extracts the token:
 
@@ -501,7 +501,7 @@ abc123
 
 The ?. is optional chaining. It prevents an error if authorization is missing.
 
-20. Verifying the Access Token
+## 20. Verifying the Access Token
 
 The route calls:
 
@@ -523,7 +523,7 @@ verification succeeds.
 
 Otherwise, an error is thrown.
 
-21. Finding the User
+## 21. Finding the User
 
 After verification:
 
@@ -553,7 +553,7 @@ MongoDB findById()
         v
 Return user information
 
-22. What Happens When the Access Token Expires?
+## 22. What Happens When the Access Token Expires?
 
 The route catches the verification error:
 
@@ -574,7 +574,7 @@ The server is essentially saying:
 
 At this point, the client can use the refresh-token flow.
 
-23. /refresh — Refreshing the Access Token
+## 23. /refresh — Refreshing the Access Token
 
 The refresh endpoint is:
 
@@ -584,7 +584,7 @@ The purpose of this endpoint is not to access normal protected resources.
 
 Its purpose is to issue fresh authentication tokens.
 
-24. Reading the Refresh Token From the Cookie
+## 24. Reading the Refresh Token From the Cookie
 
 The code uses:
 
@@ -602,7 +602,7 @@ req.cookies
 
 Without cookie-parser, this code would not have the parsed req.cookies object in this setup.
 
-25. Checking Whether the Refresh Token Exists
+## 25. Checking Whether the Refresh Token Exists
 
 if (!refreshtoken) {
   return res.status(401).json({
@@ -612,7 +612,7 @@ if (!refreshtoken) {
 
 If there is no refresh token, the server cannot perform the refresh operation.
 
-26. Verifying the Refresh Token
+## 26. Verifying the Refresh Token
 
 The route calls:
 
@@ -629,7 +629,7 @@ Refresh token -> REFRESH_TOKEN secret
 
 Using separate secrets helps keep the two credentials cryptographically distinct.
 
-27. Finding the User From the Refresh Token
+## 27. Finding the User From the Refresh Token
 
 After verification:
 
@@ -639,7 +639,7 @@ The refresh token contains the user's ID in its payload.
 
 The server uses that ID to retrieve the MongoDB user.
 
-28. Refresh Token Database Check
+## 28. Refresh Token Database Check
 
 This is one of the important security parts of this implementation:
 
@@ -657,7 +657,7 @@ This means the server is not relying solely on JWT signature verification.
 
 It also maintains server-side state for the current refresh token.
 
-29. What Happens When the Refresh Token Does Not Match?
+## 29. What Happens When the Refresh Token Does Not Match?
 
 The code does:
 
@@ -674,7 +674,7 @@ This invalidates the stored refresh token.
 
 This is useful because a refresh token can be revoked server-side by changing/removing the stored token.
 
-30. Generating New Tokens
+## 30. Generating New Tokens
 
 If everything is valid:
 
@@ -701,7 +701,7 @@ from the returned object is assigned to:
 
 latestrefreshtoken
 
-31. Refresh Token Rotation
+## 31. Refresh Token Rotation
 
 The new refresh token is placed into the cookie:
 
@@ -735,7 +735,7 @@ Old token is no longer the stored token
 
 This pattern is commonly called refresh token rotation.
 
-32. Refresh Response
+## 32. Refresh Response
 
 The endpoint returns:
 
@@ -748,7 +748,7 @@ The new access token is returned to the client.
 
 The refresh token is updated through the HTTP-only cookie.
 
-33. Why Have Two Tokens?
+## 33. Why Have Two Tokens?
 
 Without refresh tokens, you could make an access token valid for a long time:
 
@@ -782,7 +782,7 @@ Longer refresh-token lifetime
 
 Prevents the user from having to log in every 15 minutes.
 
-34. Real-World Example
+## 34. Real-World Example
 
 Imagine logging into a website.
 
@@ -833,7 +833,7 @@ Rotate refresh token
 
 The client receives the new access token and can continue making protected API requests.
 
-35. Important Mental Model
+## 35. Important Mental Model
 
 Think of the tokens like this:
 
@@ -853,7 +853,7 @@ Stored more carefully.
 
 A refresh token does not normally replace the access token for every API request.
 
-36. Security Comparison
+## 36. Security Comparison
 
 Property
 
@@ -909,7 +909,7 @@ No
 
 Yes
 
-37. Why HTTP-Only Matters
+## 37. Why HTTP-Only Matters
 
 The refresh token is particularly sensitive because it can be used to obtain new access tokens.
 
@@ -940,7 +940,7 @@ and CSRF protection where applicable.
 
 Those settings are not present in the supplied code, so they are not part of this implementation.
 
-38. The MongoDB User Model
+## 38. The MongoDB User Model
 
 The user schema contains:
 
@@ -961,7 +961,7 @@ refreshtoken: {
 
 This allows the server to maintain the current refresh token associated with the user.
 
-39. Express Application Setup
+## 39. Express Application Setup
 
 app.js creates the Express application:
 
@@ -990,7 +990,7 @@ auth.routes.js
       +--> GET  /me
       +--> POST /refresh
 
-40. Server Startup
+## 40. Server Startup
 
 server.js imports the Express application:
 
@@ -1020,7 +1020,7 @@ Start Express server
        v
 Listen on port 3000
 
-41. Complete Authentication Lifecycle
+## 41. Complete Authentication Lifecycle
 
                     REGISTER / LOGIN
                            |
@@ -1069,7 +1069,7 @@ Listen on port 3000
                               v
                       Continue session
 
-42. JWT vs Token — Important Terminology
+## 42. JWT vs Token — Important Terminology
 
 A JWT is itself a token.
 
@@ -1095,7 +1095,7 @@ Refresh token = JWT used for refreshing authentication
 
 The distinction is mainly about purpose, not about one token being generated from the other.
 
-43. What jwt.sign() Actually Does
+## 43. What jwt.sign() Actually Does
 
 Conceptually:
 
@@ -1126,7 +1126,7 @@ jwt.verify()
 
 The server can therefore detect whether the token was correctly signed and is still valid.
 
-44. What Is Inside the JWT?
+## 44. What Is Inside the JWT?
 
 This project signs:
 
@@ -1156,7 +1156,7 @@ JWT payloads are encoded, not encrypted by default.
 
 Therefore sensitive information should not be placed in the payload simply because it is inside a JWT.
 
-45. Common Mistakes to Avoid
+## 45. Common Mistakes to Avoid
 
 Mistake 1 — Sending the refresh token with every API request
 
@@ -1246,7 +1246,7 @@ MongoDB query
       v
 Does this user exist?
 
-46. The Three Layers of Authentication in This Project
+## 46. The Three Layers of Authentication in This Project
 
 It helps to separate these concepts.
 
@@ -1268,7 +1268,7 @@ usermodel.findById(decoded.id)
 
 Authentication systems often become much easier to understand once these responsibilities are kept separate.
 
-47. Why the Refresh Token Is Stored in MongoDB
+## 47. Why the Refresh Token Is Stored in MongoDB
 
 A pure stateless JWT system would only need to verify the refresh JWT.
 
@@ -1295,7 +1295,7 @@ the refresh credential can no longer pass the database comparison.
 
 This gives the server a way to revoke the refresh session.
 
-48. Access Token and Refresh Token: Use Cases
+## 48. Access Token and Refresh Token: Use Cases
 
 Access Token Use Cases
 
@@ -1338,7 +1338,7 @@ POST /app/auth/refresh
 
 with the refresh token supplied by the browser cookie.
 
-49. Simple Analogy
+## 49. Simple Analogy
 
 Think of a building.
 
@@ -1366,7 +1366,7 @@ You use it to obtain another temporary access badge.
 
 That is the core idea behind access + refresh token authentication.
 
-50. Final Mental Model
+## 50. Final Mental Model
 
 Remember this:
 
@@ -1405,7 +1405,7 @@ And the most important distinction:
 
 The refresh token is not used to authorize every API request. It is a credential used to obtain a fresh access token.
 
-51. Source-Specific Notes
+## 51. Source-Specific Notes
 
 The explanations above are based on the supplied implementation.
 
