@@ -1,5 +1,18 @@
 import express from "express";
 const app = express();
-app.use(express.json());
+import authroutes from "../routes/auth.routes.js";
+import cookieParser from "cookie-parser";
 
-export default app
+console.log("app is working ");
+
+
+app.get("/apphaibc", (req, res) => {
+
+  res.send("yopooyoyo");
+});
+
+app.use(express.json());
+app.use(cookieParser());
+app.use("/app/auth", authroutes);
+
+export default app;
