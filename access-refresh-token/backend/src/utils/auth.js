@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import config from "../../config/config.js";
-import router from "../routes/auth.routes.js";
+
 
 export const generatetokens = ({ userid }) => {
   const accesstoken = jwt.sign({ id: userid }, config.ACCESS_TOKEN, {

@@ -10,7 +10,7 @@ import {
 const router = Router();
 
 router.post("/reg", async (req, res) => {
-  console.log("req didnt recived ");
+   console.log("req.body ->", req.body);
 
   try {
     const { email, name, password } = req.body;
