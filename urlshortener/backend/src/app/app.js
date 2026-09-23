@@ -25,7 +25,7 @@ app.get("/:code", async function (req, res) {
 
     await urlmodel.findOneAndUpdate(
       {
-        // Find the document whose short_code is code 
+        // Find the document whose short_code is code
         short_code: code,
       },
       {
@@ -34,8 +34,9 @@ app.get("/:code", async function (req, res) {
         $inc: { clicks_count: 1 },
       },
     );
-
   } catch (error) {
+    console.log("Error in redirect api -> ", error);
+
     res.status(500).json({
       message: "Invalid url code ",
     });

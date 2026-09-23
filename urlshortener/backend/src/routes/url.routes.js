@@ -42,7 +42,7 @@ router.post("/", async (req, res) => {
       message: "URL shorten successfully",
       data: {
         originalurl: new_url.og_url,
-        shortcode: new_url.shortcode,
+        short_code: new_url.short_code,
       },
     });
   } catch (error) {
@@ -69,10 +69,41 @@ router.get("/getlinks", async function (req, res) {
       },
     });
   } catch (error) {
+    console.log("Error in the get links api -> ", error);
+
     res.status(500).json({
       message: "Server Error",
     });
     console.log("Error in the get api -> ", error);
+  }
+});
+
+/* 
+delete -> /api/url/:id
+*/
+
+router.delete("/:id", async function (req, res) {
+  try {
+    const { id } = req.params;
+    const url = await urlmodel.findById(id);
+
+    if (!url) {
+      return res.status(404).json({
+        message: "URL not found",
+      });
+    }
+
+    await urlmodel.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      message: "URL Deleted",
+    });
+  } catch (error) {
+    console.log("Error in delete api -> ", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
   }
 });
 
