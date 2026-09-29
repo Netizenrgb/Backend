@@ -40,11 +40,13 @@ api.interceptors.response.use(
     if (
       error.response?.status !== 401 ||
       !originalRequest ||
-      originalRequest._retry
+      originalRequest._retry ||
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/auth/reg") ||
+      originalRequest.url?.includes("/auth/refresh-token")
     ) {
       return Promise.reject(error);
     }
-
     originalRequest._retry = true;
 
     try {

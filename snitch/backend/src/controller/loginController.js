@@ -31,7 +31,9 @@ export const logincontroller = async (req, res) => {
 
     res.cookie("refreshtoken", refreshtoken, {
       httpOnly: true,
-      secure: configuri.node_env === "production",
+      secure: true,
+      sameSite: "none",
+      path: "/",
     });
 
     res.status(200).json({
