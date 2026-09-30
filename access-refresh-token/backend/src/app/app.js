@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 
 app.use(express.json());
 app.use(cookieParser());
-app.use("/app/auth", authroutes);
+app.use("/api/auth", authroutes);
 
 app.get("/apphaibc", (req, res) => {
   res.send("yopooyoyo");
