@@ -16,3 +16,7 @@ export function createrefreshtoken({ userid, role }) {
 
   return refreshtoken;
 }
+
+export function verifyrefresgtoken(refreshtoken) {
+  return jwt.verify(refreshtoken, configuris.refresh_token);
+}

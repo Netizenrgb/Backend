@@ -13,7 +13,8 @@ const registervalidator = [
 
   body("name")
     .exists()
-    .withMessage("Name is required").bail()
+    .withMessage("Name is required")
+    .bail()
     .trim()
     .isString()
     .withMessage("Name must be string")
@@ -22,7 +23,8 @@ const registervalidator = [
     .withMessage("Minimum of 2 and maximum of 50 character are allowed"),
   body("password")
     .exists()
-    .withMessage("Password is required").bail()
+    .withMessage("Password is required")
+    .bail()
     .trim()
     .isString()
     .withMessage("Password must be string")
@@ -42,4 +44,37 @@ const registervalidator = [
   },
 ];
 
-export default registervalidator;
+const loginvalidator = [
+  body("email")
+    .exists()
+    .withMessage("Email is required")
+    .isString()
+    .withMessage("Email must br string value")
+    .bail()
+    .trim()
+    .isEmail()
+    .withMessage("Pls provide a valid email address"),
+  body("loginpassword")
+    .trim()
+    .exists()
+    .withMessage("Password is required")
+    .bail()
+    .isString()
+    .withMessage("Password has to be a string")
+    .bail()
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long"),
+
+  (req, res, next) => {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return res.status(400).json({
+        mesaage: "Invalid data",
+        error: error.array(),
+      });
+    }
+    next();
+  },
+];
+
+export { registervalidator, loginvalidator };

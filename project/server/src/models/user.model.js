@@ -14,6 +14,11 @@ const userscheme = new mongoose.Schema({
     type: String,
     required: true,
   },
+  
+  refresh_Token:{
+    type:String
+  },
+  
   role: {
     type: String,
     default: "user",
