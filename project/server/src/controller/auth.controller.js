@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import {
   createaccesstoken,
   createrefreshtoken,
-  verifyrefresgtoken,
+  verifyrefreshtoken,
 } from "../utils/auth.utils.js";
 
 const regcontroller = async (req, res) => {
@@ -93,7 +93,10 @@ const logincontroller = async (req, res) => {
       role: user.role,
     });
 
-    await usermodel.findOneAndUpdate({ email }, { loginrefreshtoken });
+    await usermodel.findOneAndUpdate(
+      { email },
+      { refresh_Token: loginrefreshtoken },
+    );
 
     res.cookie("loginrefreshtoken", loginrefreshtoken, { httpOnly: true });
 
@@ -116,17 +119,79 @@ const logincontroller = async (req, res) => {
 const refreshcontroller = async (req, res) => {
   const decodedrefreshtoken = req.cookies.loginrefreshtoken;
 
-  if (decodedrefreshtoken) {
+  if (!decodedrefreshtoken) {
     return res.status(400).json({
       message: "Refresh token is not available ",
     });
   }
 
   try {
-    const decode = verifyrefresgtoken(decodedrefreshtoken);
+    const decode = verifyrefreshtoken(decodedrefreshtoken);
+
+    const { userid, role } = decode;
+    const user = await usermodel.findById(userid);
+
+    if (decodedrefreshtoken != user.refresh_Token) {
+      await usermodel.findByIdAndUpdate(user._id, {
+        refresh_Token: null,
+      });
+      return res.status(401).json({
+        message: "Refresh token mismatch",
+      });
+    }
+
+    const accesstoken = createaccesstoken({ userid, role });
+
+    const newRefreshToken = createrefreshtoken({
+      userid,
+      role,
+    });
+
+    await usermodel.findByIdAndUpdate(user._id, {
+      refresh_Token: newRefreshToken,
+    });
+
+    res.cookie("loginrefreshtoken", newRefreshToken, {
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      message: "Token reotated successfully",
+      data: {
+        user: {
+          userid: user._id,
+          email: user.email,
+          name: user.name,
+        },
+        accesstoken: accesstoken,
+      },
+    });
   } catch (error) {
     console.log("issue in the refresh api refreshtoken -> ", error);
+
+    return res.status(401).json({
+      message: "Invalid refressh token",
+    });
   }
 };
 
-export { regcontroller, logincontroller };
+const getmecontroller = async (req, res) => {
+  try {
+    const { userid, role } = req.user;
+    const user = await usermodel.findById(userid);
+    res.status(200).json({
+      message: "logged in users data",
+      data: {
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      },
+    });
+  } catch (error) {
+    console.log("Error in the get me api");
+  }
+};
+
+export { regcontroller, logincontroller, refreshcontroller, getmecontroller };

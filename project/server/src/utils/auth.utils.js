@@ -9,6 +9,10 @@ export function createaccesstoken({ userid, role }) {
   return accesstoken;
 }
 
+export function readaccesstoken(accesstoken){
+  return jwt.verify(accesstoken,configuris.access_token)
+}
+
 export function createrefreshtoken({ userid, role }) {
   const refreshtoken = jwt.sign({ userid, role }, configuris.refresh_token, {
     expiresIn: "7d",
@@ -17,6 +21,6 @@ export function createrefreshtoken({ userid, role }) {
   return refreshtoken;
 }
 
-export function verifyrefresgtoken(refreshtoken) {
+export function verifyrefreshtoken(refreshtoken) {
   return jwt.verify(refreshtoken, configuris.refresh_token);
 }
