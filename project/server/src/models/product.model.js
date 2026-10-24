@@ -55,7 +55,7 @@ const productscheme = new mongoose.Schema({
     },
   ],
 
-  //   this is sellers id , the one who created the prd
+  //   this is sellers id , the one who creates prd
   seller: {
     type: mongoose.Types.ObjectId,
     ref: "users",
