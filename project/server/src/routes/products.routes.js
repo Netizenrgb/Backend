@@ -1,7 +1,10 @@
 import { json, Router } from "express";
 import { productvalidator } from "../validators/product.validator.js";
 import { authenticate } from "../middleware/auth.middleware.js";
-import { createproduct } from "../controller/product.controller.js";
+import {
+  createproduct,
+  listallproducts,
+} from "../controller/product.controller.js";
 import multer from "multer";
 
 const router = Router();
@@ -9,7 +12,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     files: 4, //only 4 files are allowed at a time
-    fileSize: 10  * 1024 * 1024, // 1MB
+    fileSize: 10 * 1024 * 1024, // 1MB
   },
 });
 
@@ -45,5 +48,7 @@ router.post(
   productvalidator,
   createproduct,
 );
+
+router.get("/", authenticate, listallproducts);
 
 export default router;

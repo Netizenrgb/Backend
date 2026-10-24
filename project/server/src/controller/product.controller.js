@@ -34,3 +34,11 @@ export async function createproduct(req, res) {
     },
   });
 }
+
+export async function listallproducts(req, res) {
+  const products = await productmodel.find();
+  res.status(200).json({
+    message: "Products data retrived successfully",
+    data: products,
+  });
+}
