@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     cb(null, "upload/");
   },
   filename: (req, file, cb) => {
-    // this is the actual file namethe Date.now() is used to create a unique file name everytime
+    // this is the actual file name the Date.now() is used to create a unique file name everytime
     console.log("filename -> ", file);
 
     cb(null, Date.now() + file.originalname);
