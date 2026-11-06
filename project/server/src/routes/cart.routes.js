@@ -1,7 +1,11 @@
 import { Router } from "express";
-import cartmodel from "../models/cart.model.js";
-const cartrouter = Router()
+import addtocartvalidator from "../validators/cart.validator.js";
+import { authenticate } from "../middleware/auth.middleware.js";
+import { addtocart, getcart } from "../controller/cart.controller.js";
+const cartrouter = Router();
 
- 
+cartrouter.post("/", authenticate, addtocartvalidator, addtocart);
 
-export default cartrouter
+cartrouter.get("/", authenticate, getcart);
+
+export default cartrouter;
