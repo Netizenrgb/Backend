@@ -1,9 +1,18 @@
-import { json, Router } from "express";
-import { productvalidator } from "../validators/product.validator.js";
-import { authenticate } from "../middleware/auth.middleware.js";
+import { Router } from "express";
+import {
+  productvalidator,
+  unlistproductvalidator,
+} from "../validators/product.validator.js";
+import {
+  authenticate,
+  authenticateseller,
+} from "../middleware/auth.middleware.js";
 import {
   createproduct,
   listallproducts,
+  listallproductstoseller,
+  listproduct,
+  unlistproduct,
 } from "../controller/product.controller.js";
 import multer from "multer";
 
@@ -19,15 +28,7 @@ const upload = multer({
 router.post(
   "/",
   authenticate,
-  (req, res, next) => {
-    if (req.user.role !== "seller") {
-      return res.status(403).json({
-        message: "User is not authorised to create products",
-      });
-    }
-
-    next();
-  },
+  authenticateseller,
   upload.array("images"),
   // Multer parses multipart/form-data fields as strings.
   // Parse the JSON-encoded `price` string into an object and `sizes` string into an array
@@ -50,5 +51,28 @@ router.post(
 );
 
 router.get("/", authenticate, listallproducts);
+
+router.patch(
+  "/unlist:id",
+  authenticate,
+  authenticateseller,
+  unlistproductvalidator,
+  unlistproduct,
+);
+
+router.patch(
+  "/listprd:id",
+  authenticate,
+  authenticateseller,
+  unlistproductvalidator,
+  listproduct,
+);
+
+router.get(
+  "/seller",
+  authenticate,
+  authenticateseller,
+  listallproductstoseller,
+);
 
 export default router;

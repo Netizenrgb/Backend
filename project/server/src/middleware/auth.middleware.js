@@ -20,3 +20,13 @@ export function authenticate(req, res, next) {
     });
   }
 }
+
+export function authenticateseller(req, res, next) {
+  if (req.user.role !== "seller") {
+    return res.status(403 ).json({
+      message:
+        "The request is not from seller, not inaccessible,user is unauthorized ",
+    });
+  }
+  next();
+}
