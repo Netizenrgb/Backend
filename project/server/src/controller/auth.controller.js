@@ -6,6 +6,7 @@ import {
   verifyrefreshtoken,
 } from "../utils/auth.utils.js";
 
+// user registration
 const regcontroller = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -64,6 +65,7 @@ const regcontroller = async (req, res) => {
   }
 };
 
+// user logoin
 const logincontroller = async (req, res) => {
   try {
     const { email, loginpassword } = req.body;
@@ -116,6 +118,8 @@ const logincontroller = async (req, res) => {
   }
 };
 
+
+// refresh to get new tokens
 const refreshcontroller = async (req, res) => {
   const decodedrefreshtoken = req.cookies.loginrefreshtoken;
 
