@@ -53,7 +53,7 @@ router.post(
 router.get("/", authenticate, listallproducts);
 
 router.patch(
-  "/unlist:id",
+  "/unlist/:id",
   authenticate,
   authenticateseller,
   unlistproductvalidator,
@@ -61,7 +61,7 @@ router.patch(
 );
 
 router.patch(
-  "/listprd:id",
+  "/listprd/:id",
   authenticate,
   authenticateseller,
   unlistproductvalidator,
