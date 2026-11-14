@@ -172,9 +172,6 @@ httpserver.listen(3000, (req, res) => {
 4. `socket.on("disconnect", ...)` runs when that specific client disconnects.
 5. `httpserver.listen(3000)` starts listening for both normal HTTP requests and Socket.IO traffic on port 3000.
 
-# Your Comments Explained
-
-The comments below are taken from `src/server.js`. Each one is quoted exactly as written, followed by an explanation.
 
 ## 1. The `connect` event
 
@@ -184,7 +181,7 @@ The comments below are taken from `src/server.js`. Each one is quoted exactly as
 
 ## 2. Events on `io` and events on `socket`
 
-> `// omly one event is on the io and the rest are on socket`
+> `// only one event is on the io and the rest are on socket`
 
 On the server, the `io` object only listens for the connection event. Everything else (custom events, `disconnect`, and so on) is registered on the individual `socket` inside the connection handler, because those events belong to one client.
 
